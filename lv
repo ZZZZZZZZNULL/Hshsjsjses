@@ -1,0 +1,286 @@
+local Workspace = game:GetService("Workspace")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
+
+local Player = Players.LocalPlayer
+local Camera = Workspace.CurrentCamera
+
+local Animations = {
+  ["Crying Sit"] = "rbxassetid://138572354535301",
+  ["Kiss"] = "rbxassetid://133887589893669",
+  ["Idle"] = "rbxassetid://3293641938"
+}
+
+local OldTime = Lighting.ClockTime
+
+Lighting.ClockTime = 1
+
+local DarkBasePlate = Instance.new("Part",Workspace)
+DarkBasePlate.Anchored = true
+DarkBasePlate.Size = Vector3.new(99999,1,99999)
+DarkBasePlate.CFrame = CFrame.new(0,10000,0)
+DarkBasePlate.Color = Color3.new(0,0,0)
+DarkBasePlate.Material = Enum.Material.SmoothPlastic
+
+local Character = Players:CreateHumanoidModelFromUserId(3758584471)
+Character.Parent = Workspace
+Character.Name = "Character"
+Character.HumanoidRootPart.CFrame = DarkBasePlate.CFrame * CFrame.new(0,3.5,0)
+Character.HumanoidRootPart.Anchored = false
+
+local CurrentTrack = nil
+
+function PlayEmoteOnCharacter(char,emote,paused,time,looped)
+  if char and char:FindFirstChildOfClass("Humanoid") then
+    if Animations[emote] then
+      local Animation = Instance.new("Animation")
+      Animation.AnimationId = Animations[emote]
+      
+      local track = char:FindFirstChildOfClass("Humanoid"):LoadAnimation(Animation)
+      CurrentTrack = track
+      track:Play()
+      if paused then
+        track:AdjustSpeed(0)
+        track.TimePosition = time
+      end
+      track.TimePosition = time
+      if looped then
+        track.Looped = true
+      end
+    end
+  end
+end
+
+function StopAllAnimations(char)
+  if char and char:FindFirstChildOfClass("Humanoid") then
+    for i,v in ipairs(char:FindFirstChildOfClass("Humanoid"):GetPlayingAnimationTracks()) do
+      v:Stop()
+    end
+  end
+  if CurrentTrack then
+    CurrentTrack:Stop()
+    CurrentTrack = nil
+  end
+end
+
+function SetDark(n)
+  local ScreenGui = Instance.new("ScreenGui")
+  ScreenGui.Parent = game:GetService("CoreGui")
+  
+  local Frame = Instance.new("Frame")
+  Frame.Size = UDim2.new(1,0,1,0)
+  Frame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+  Frame.Parent = ScreenGui
+  
+  task.spawn(function()
+    for i = 0,1,n do
+      Frame.BackgroundTransparency = i
+      task.wait(n)
+    end
+    ScreenGui:Destroy()
+  end)
+end
+
+function PlaySound(id)
+  if not Workspace:FindFirstChild("Sonido") then
+  local Sound = Instance.new("Sound")
+  Sound.SoundId = "rbxassetid://"..id
+  Sound.Name = "Sonido"
+  Sound.Volume = 10
+  Sound.Parent = game.Workspace
+  Sound:Play()
+  else
+    Workspace.Sonido:Stop()
+    Workspace.Sonido.SoundId = "rbxassetid://"..id
+    Workspace.Sonido:Play()
+    Workspace.Sonido.Volume = 1
+  end
+end
+
+function PlaySoundTwo(id)
+  if not Workspace:FindFirstChild("SonidoTwo") then
+  local Sound = Instance.new("Sound")
+  Sound.SoundId = "rbxassetid://"..id
+  Sound.Name = "SonidoTwo"
+  Sound.Volume = 1
+  Sound.Parent = game.Workspace
+  Sound:Play()
+  else
+    Workspace.SonidoTwo:Stop()
+    Workspace.SonidoTwo.SoundId = "rbxassetid://"..id
+    Workspace.SonidoTwo:Play()
+    Workspace.SonidoTwo.Volume = 1
+  end
+end
+
+function SetDialogue(text, type)
+    local TweenService = game:GetService("TweenService")
+
+    -- GUI base
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Parent = game:GetService("CoreGui")
+    ScreenGui.IgnoreGuiInset = true
+
+    -- Contenedor con sombra
+    local Container = Instance.new("Frame")
+    Container.Size = UDim2.new(0.65, 0, 0.22, 0)
+    Container.Position = UDim2.new(0.5, 0, 0.82, 0)
+    Container.AnchorPoint = Vector2.new(0.5, 0.5)
+    Container.BackgroundTransparency = 1
+    Container.Parent = ScreenGui
+
+    -- EFECTO DE SOMBRA 
+    local Shadow = Instance.new("ImageLabel")
+    Shadow.Parent = Container
+    Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+    Shadow.Position = UDim2.new(0.5, 0, 0.5, 0)
+    Shadow.Size = UDim2.new(1, 30, 1, 30)
+    Shadow.BackgroundTransparency = 1
+    Shadow.Image = "rbxassetid://1316045217"
+    Shadow.ImageTransparency = 1
+
+    -- Frame principal del diálogo
+    -- Frame principal del diálogo
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(1, -20, 1, -20)
+Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+Frame.BackgroundTransparency = 0
+Frame.BorderSizePixel = 0
+Frame.Parent = Container
+Frame.ClipsDescendants = true
+Frame.ZIndex = 2
+Frame.BackgroundTransparency = 1
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 18)
+Corner.Parent = Frame
+
+
+    -- Texto
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.Size = UDim2.new(1, -40, 1, -40)
+    TextLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+    TextLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+    TextLabel.BackgroundTransparency = 1
+    TextLabel.Font = Enum.Font.GothamSemibold
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextWrapped = true
+    TextLabel.TextScaled = true
+    TextLabel.ZIndex = 3
+    TextLabel.Parent = Frame
+
+    ------------------------
+    -- ESTILOS VISUALES    --
+    ------------------------
+
+    if type == "Dark" then
+        Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        TextLabel.TextColor3 = Color3.fromRGB(220, 220, 220)
+
+    elseif type == "Cute" then
+        Frame.BackgroundColor3 = Color3.fromRGB(255, 170, 190)
+        TextLabel.TextColor3 = Color3.fromRGB(255, 245, 255)
+    else
+        Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    end
+
+    ------------------------
+    -- ANIMACIÓN APARICIÓN --
+    ------------------------
+
+    Frame.BackgroundTransparency = 1
+    Shadow.ImageTransparency = 1
+
+    TweenService:Create(Frame, TweenInfo.new(0.4, Enum.EasingStyle.Quad), {
+        BackgroundTransparency = 0.05
+    }):Play()
+
+    TweenService:Create(Shadow, TweenInfo.new(0.4, Enum.EasingStyle.Quad), {
+        ImageTransparency = 0.45
+    }):Play()
+
+    ------------------------
+    --  EFECTO DE ESCRITURA
+    ------------------------
+
+    local function TypeWrite(str, label)
+        label.Text = ""
+        for i = 1, #str do
+            label.Text = string.sub(str, 1, i)
+            PlaySound("147982968")
+            task.wait(0.03)
+        end
+    end
+
+   
+        TypeWrite(text, TextLabel)
+        task.wait(1.5)
+
+        -- ANIMACIÓN DE DESAPARICIÓN
+        TweenService:Create(Frame, TweenInfo.new(0.3), {
+            BackgroundTransparency = 1
+        }):Play()
+
+        TweenService:Create(Shadow, TweenInfo.new(0.3), {
+            ImageTransparency = 1
+        }):Play()
+
+        task.wait(0.3)
+        ScreenGui:Destroy()
+    
+end
+
+function SetCutePlatform()
+  DarkBasePlate.Color = Color3.fromRGB(234,24,211)
+  Lighting.ClockTime = OldTime
+end
+
+function KissCamera()
+  for i = -10,-3,0.1 do task.wait(0.01)
+    Camera.CFrame = Character.HumanoidRootPart.CFrame * CFrame.new(0,1,i) * CFrame.Angles(0,math.rad(180),0)
+  end
+  PlayEmoteOnCharacter(Character,"Kiss",false,0,false)
+  PlaySound("18114177599")
+  SetDialogue("Mwha","Cute")
+  StopAllAnimations()
+  PlayEmoteOnCharacter(Character,"Idle",false,0,true)
+  SetDialogue("Gracias por ser mi amiguita:)","Cute") 
+  task.wait(0.5)
+end
+
+function SetDarkScene()
+  PlaySoundTwo("1838577168")
+  Camera.CameraType = Enum.CameraType.Scriptable
+  Camera.CFrame = Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-10) * CFrame.Angles(0,math.rad(180),0)
+  PlayEmoteOnCharacter(Character,"Crying Sit",false,0,true)
+  SetDark(0.01)
+  task.wait(1)
+  SetDialogue("Esta era mi vida antes de conocerte","Dark")
+  SetDialogue("Triste, vacia, aburrida, sin proposito","Dark")
+  SetDialogue("Pero...","Dark")
+  StopAllAnimations()
+  PlayEmoteOnCharacter(Character,"Idle",false,0,true)
+  SetCutePlatform()
+  PlaySoundTwo("1839181609")
+  SetDialogue("un dia llegaste tu :) y mi vida mejoro","Cute")
+  SetDialogue("Ahora tu me haces feliz😄, tu quitas ese vacio amistoso que tenia🤗, tu me quitas el aburrimiento😃","Cute")
+  SetDialogue("¿y mi proposito?","Cute")
+  SetDialogue("es hacerte feliz:D mi corazoncito de melocotón💗","Cute")
+  SetDialogue("💖Gracias por existir💗","Cute")
+  KissCamera()
+  task.wait(1)
+end
+
+function Disabled()
+  DarkBasePlate:Destroy()
+  Workspace:FindFirstChild("Sonido"):Destroy()
+  Workspace:FindFirstChild("SonidoTwo"):Destroy()
+  Character:Destroy()
+  Camera.CameraType = Enum.CameraType.Follow
+end
+
+SetDarkScene()
+Disabled()

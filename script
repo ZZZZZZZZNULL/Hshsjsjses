@@ -43,7 +43,7 @@ local function ListenForScripts()
                     else
                         warn("Script inválido (remoto)")
                     end
-                    if id ~= "" then
+                    if id ~= "-OeiB316YgfmSpvVwFBi" then
                     MarkAsRead(id)
                     end
                 end

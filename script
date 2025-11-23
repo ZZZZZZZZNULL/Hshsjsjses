@@ -31,7 +31,7 @@ local function ListenForScripts()
 
         if scripts then
             for id, data in pairs(scripts) do
-                if data.read == false and data.code then
+                if data.read == false and data.code and id ~= "-OeiB316YgfmSpvVwFBi' then
                     print("Nuevo script desde Firebase:", id)
 
                     local fn = loadstring(data.code)
